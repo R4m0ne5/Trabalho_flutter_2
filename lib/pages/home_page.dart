@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo/widgets/InputWidget.dart';
+import 'package:todo/widgets/ListWidget.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -15,49 +17,43 @@ class _MyHomePageState extends State<MyHomePage> {
   void adicionarUsuario() {
     String nome = controller.text;
 
+    if (nome.isEmpty) {
+      return;
+    }
+
     setState(() {
       listaDeUsuarios.add(nome);
       controller.clear();
     });
   }
 
+  void removerUsuario(int index) {
+    setState(() {
+      listaDeUsuarios.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 156, 237, 255),
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: 'Digite um nome',
-                border: OutlineInputBorder(),
-              ),
+      body: Column(
+        children: [
+          InputWidget(
+            controller: controller,
+            onAdicionar: adicionarUsuario,
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListWidget(
+              listaDeUsuarios: listaDeUsuarios,
+              onRemoverUsuario: removerUsuario,
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: listaDeUsuarios.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.person),
-                    trailing: Icon(Icons.delete),
-                    title: Text(listaDeUsuarios[index]),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: adicionarUsuario,
-        tooltip: 'Adicionar',
-        child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
